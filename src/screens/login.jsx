@@ -31,7 +31,7 @@ export default function Login() {
         mutationFn: (data) => doUpdate('api/users/lock-account/', token, data?.username, data?.data),
     })
     const mutation =  useMutation({
-        mutationFn: (data) => {;doUpdate('api/authenticate',token, '',data?.data)},
+        mutationFn: (data) => {doUpdate('api/authenticate',token, '',data?.data)},
         onMutate: (variables) => {
             return { id: 1 }
         },
@@ -50,6 +50,7 @@ export default function Login() {
 
         },
         onSuccess: async (data, variables, context) => {
+            console.log(data)
             const token=data?.token;
             await localStorage.setItem('token',token);
             await localStorage.setItem('login',JSON.stringify(data));

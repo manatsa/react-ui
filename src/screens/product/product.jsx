@@ -40,7 +40,7 @@ const Product =  () => {
         industry: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
     });
 
-    const logins=login ? JSON.parse(login) : null;
+    const logins=login && login!=='undefined' ? JSON.parse(login) : null;
 
     useEffect((e)=>{
         if(!token || isExpired ){
@@ -197,7 +197,7 @@ const Product =  () => {
                     {/*<EditProductDialog selectedProduct={selectedProduct} setEditProductDialogVisible={setOpenNewProductDialog} openNewUserDialog={openNewProductDialog}
                                         token={token} setProductsData={refresh} showSuccessFeedback={showSuccessFeedback} showErrorFeedback={showErrorFeedback}/>*/}
                     {/*<MultiStepForm  />*/}
-                    <EditProductDialog />
+                    {/*// <EditProductDialog />*/}
                     {/*<ProductMultiStepForm />*/}
 
                 </Dialog>

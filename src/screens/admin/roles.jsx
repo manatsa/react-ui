@@ -38,7 +38,7 @@ const Roles =  () => {
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
     });
 
-    const logins=login ? JSON.parse(login) : null;
+    const logins=login && login!=='undefined' ? JSON.parse(login) : null;
 
     useEffect((e)=>{
         if(!token || isExpired ){

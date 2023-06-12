@@ -26,7 +26,7 @@ import {getLogin} from "../auth/check.login";
 
 
 export default function AppMenu() {
-    const theme = useTheme();
+
     const [open, setOpen] = React.useState(false);
     const navigate=useNavigate();
     const {token, login} = getLogin();
@@ -35,6 +35,7 @@ export default function AppMenu() {
     const userMenu = useRef(null);
     const [appName, setAppName]= useState('');
 
+    // alert(login!=='undefined')
     useEffect(()=>{
         setAppName("ROYAL TRADE")
     },[])
@@ -102,13 +103,13 @@ export default function AppMenu() {
         {
             label: 'System Admin',
             icon: 'pi pi-fw pi-slack',
-            expanded:JSON.parse(login)?.roles?.includes('ADMIN'),
+            expanded: login && login!=='undefined' &&  JSON.parse(login || {})?.roles?.includes('ADMIN'),
             items: [
                 {
                     label: 'Users',
                     icon: 'pi pi-fw pi-users',
                     command: ()=>{
-                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
+                        if(token && login && login!=='undefined' && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/users");
                             setOpen(false);
                         }else{
@@ -120,7 +121,7 @@ export default function AppMenu() {
                     label: 'Roles',
                     icon: 'pi pi-fw pi-lock-open',
                     command: ()=>{
-                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
+                        if(token && login && login!=='undefined' && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/roles");
                             setOpen(false);
                         }else{
@@ -132,7 +133,7 @@ export default function AppMenu() {
                     label: 'Privileges',
                     icon: 'pi pi-fw pi-wrench',
                     command: ()=>{
-                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
+                        if(token && login && login!=='undefined' && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/privileges");
                             setOpen(false);
                         }else{
@@ -144,7 +145,7 @@ export default function AppMenu() {
                     label: 'Settings',
                     icon: 'pi pi-fw pi-cog',
                     command: ()=>{
-                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
+                        if(token && login && login!=='undefined' && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/settings");
                             setOpen(false);
                         }else{
@@ -165,7 +166,7 @@ export default function AppMenu() {
 
             label: 'Industry Admin',
             icon: 'pi pi-fw pi-folder-open',
-            expanded: JSON.parse(login)?.roles?.includes('UNDERWRITING'),
+            expanded: login && login!=='undefined' &&  JSON.parse(login||{})?.roles?.includes('UNDERWRITING'),
             items: [
                 {
                     label: 'Industry Admin',
@@ -204,7 +205,7 @@ export default function AppMenu() {
         {
             label: 'Product Admin',
             icon: 'pi pi-fw pi-dollar',
-            expanded:JSON.parse(login)?.roles?.includes('FINANCE'),
+            expanded: login && login!=='undefined' && JSON.parse(login || {})?.roles?.includes('FINANCE'),
             items: [
                 {
                     label: 'Product Admin',
@@ -292,8 +293,8 @@ export default function AppMenu() {
 
             <Menu model={userMenuItems} popup ref={userMenu} color={'green'} style={{backgroundColor: "white", color:'var(--primary-color-text)'}} />
             <Toast ref={toast} position={'center'}/>
-            <ProfileDialog visible={profileVisible} setVisible={setProfileVisible} data={JSON.parse(login)} />
-            <ChangePasswordDialog  setChangePasswordVisible={setChangePasswordVisible} selectedUser={JSON.parse(login)}
+            <ProfileDialog visible={profileVisible} setVisible={setProfileVisible} data={login && login!=='undefined'?JSON.parse(login):null} />
+            <ChangePasswordDialog  setChangePasswordVisible={setChangePasswordVisible} selectedUser={login && login!=='undefined'?JSON.parse(login):null}
                 changePasswordVisible={changePasswordVisible} token={token} showSuccessFeedback={showSuccessFeedback} showErrorFeedback={showErrorFeedback} />
 
             <div className="card flex justify-content-center">

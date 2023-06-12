@@ -2,7 +2,7 @@ import React from 'react';
 import {Button} from "primereact/button";
 
 const UserMenu =({login, userMenu, changeColor}) => {
-    const logins=(login)?JSON.parse(login):null;
+    const logins=(login && login!=='undefined')?JSON.parse(login):null;
 
     return (
         <Button label={(logins?.lastName || '') + ' ' + (logins?.firstName || '')} outlined={true} severity={"success"}

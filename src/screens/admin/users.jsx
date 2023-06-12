@@ -78,7 +78,7 @@ const Users =  () => {
         }
     });
 
-    const logins=login ? JSON.parse(login) : null;
+    const logins=login && login!=='undefined' ? JSON.parse(login) : null;
 
     useEffect(()=>{
         if(!token || isExpired ){
