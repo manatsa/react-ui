@@ -31,7 +31,7 @@ export default function Login() {
         mutationFn: (data) => doUpdate('api/users/lock-account/', token, data?.username, data?.data),
     })
     const mutation =  useMutation({
-        mutationFn: (data) => doUpdate('api/authenticate',token, '',data?.data),
+        mutationFn: (data) => {;doUpdate('api/authenticate',token, '',data?.data)},
         onMutate: (variables) => {
             return { id: 1 }
         },
@@ -46,7 +46,7 @@ export default function Login() {
                 }
             }
 
-            console.log(error)
+            console.log('ERROR:: ',mutation.failureReason)
 
         },
         onSuccess: async (data, variables, context) => {
@@ -65,6 +65,7 @@ export default function Login() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const datas = new FormData(event.currentTarget);
+
         const login={ username: datas.get("username"),password: datas.get("password")};
         setUsername(datas.get("username"));
         mutation.mutate({ id: 'login'+login['username'], data:login})

@@ -5,20 +5,11 @@ import {Toast} from "primereact/toast";
 import {InputText} from "primereact/inputtext";
 import {Button} from "primereact/button";
 import { classNames } from 'primereact/utils';
-import {Dropdown} from "primereact/dropdown";
-import {Grid} from "@mui/material";
 import {Checkbox} from "primereact/checkbox";
-import {useJwt} from "react-jwt";
 import {useNavigate} from "react-router-dom";
-import {MultiSelect} from "primereact/multiselect";
 import {ProgressSpinner} from "primereact/progressspinner";
-import PostToApi from "../../api/postToAPI";
-import showToast from "../../notifications/showToast";
 import {useMutation} from "@tanstack/react-query";
-import {sendData} from "../../query/sendData.js";
 import {useFetch} from "../../query/useFetch.js";
-import {getLogin} from "../../auth/check.login";
-import {AutoComplete} from "primereact/autocomplete";
 import doUpdate from "../../query/doUpdate.js";
 import AppAutocomplete from "../../components/AppAutocomplete.jsx";
 
@@ -51,9 +42,7 @@ const EditUserDialog=({openNewUserDialog,setEditUserDialogVisible, selectedUser,
         {name:'EXECUTIVE',code:'EXECUTIVE'}
     ]
 
-    const roleObject=rolesData?.data?.map(r=>{
-        return {name:r?.name, code:r?.name};
-    })
+
 
     const initialValues={
         id:selectedUser?.id ||'',

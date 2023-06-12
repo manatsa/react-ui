@@ -4,7 +4,6 @@ import {AutoComplete} from "primereact/autocomplete";
 
 const AppAutocomplete=({formik,items,name,multiple, placeholder, dropdown})=>{
     const [filtered, setFiltered]=useState(items);
-    const [inputValue, setInputValue] = useState(null);
     const autoRef=React.createRef();
 
     const search=(e)=>{
@@ -18,7 +17,6 @@ const AppAutocomplete=({formik,items,name,multiple, placeholder, dropdown})=>{
             });
         }
 
-        console.lo
         setFiltered( suggestionsList );
     }
     return(
@@ -34,13 +32,10 @@ const AppAutocomplete=({formik,items,name,multiple, placeholder, dropdown})=>{
                 completeMethod={search}
                 placeholder={placeholder}
                 className="w-full md:w-20rem"
-                onChange={(e) => formik.setFieldValue(name,e.value)}
-                /*onFocus={(e) => {
-                    if (!inputValue && !formik['name']) {
-                        autoRef.current.onDropdownClick(e, "");
-                    }
+                onChange={(e) => {
+                    formik.setFieldValue(name,e.value)
                 }}
-                onKeyUp={(e) => setInputValue( e.target.value)}*/
+
             />
         </>
     )

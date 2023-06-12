@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 import showToast from "../../notifications/showToast";
 import {Toast} from "primereact/toast";
 import {ProgressSpinner} from "primereact/progressspinner";
-import GetFromAPI from "../../api/getFromAPI";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import { Button } from 'primereact/button';
@@ -15,27 +14,29 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import {InputText} from "primereact/inputtext";
 import {Dialog} from "primereact/dialog";
 import {Typography} from "@mui/material";
-import EditRoleDialog from "./edit.role.dialog.jsx";
 import {useFetch} from "../../query/useFetch.js";
 import {getLogin} from "../../auth/check.login";
+import EditCategoryDialog from "./edit.category.dialog.jsx";
 
-const Roles =  () => {
+const Category =  () => {
+
 
     const {token, login}=getLogin();
     const {isExpired} =useJwt(token);
     const navigate=useNavigate();
     const toast= useRef(null);
-    const[indicator, setIndicator]=useState(false);
-    const [selectedRole, setSelectedRole] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
-    const [openNewRoleDialog, setOpenNewRoleDialog] = useState(false);
-    const [openViewRoleDialog, setOpenViewRoleDialog] = useState(false);
-    const [roles, setRoles]=useState([]);
+    const [openNewCategoryDialog, setOpenNewCategoryDialog] = useState(false);
+    const [openViewCategoryDialog, setOpenViewCategoryDialog] = useState(false);
+    const [categories, setCategories]=useState([]);
     const dt = useRef(null);
     const cm = useRef(null);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
+        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+        description: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+        industry: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] }
     });
 
     const logins=login ? JSON.parse(login) : null;
@@ -52,34 +53,41 @@ const Roles =  () => {
         }
     },[])
 
-    const viewRole = () => {
-        setOpenViewRoleDialog(true)
-    };
 
-    const {data, error, isError, isLoading }=useFetch('/api/roles/',token,['get','roles']);
+
+    const {data, error, isError, isLoading }=useFetch('/api/category/',token,['get','category']);
 
     useEffect(()=>{
-        setRoles(data)
+        let cats=data?.map(d=>{
+            return {...d,userName:d?.createdBy?.userName,industry:d?.industry?.name};
+        })
+        setCategories(cats)
     },[data])
 
     const cols = [
-        { field: 'name', header: 'ROLE NAME' },
+        { field: 'name', header: 'CATEGORY NAME' },
+        { field: 'description', header: 'CATEGORY DESCRIPTION' },
+        { field: 'industry', header: 'INDUSTRY NAME' },
         { field: 'active', header: 'ACTIVE' },
         { field: 'dateCreated', header: 'DATE CREATED' },
-        { field: 'privilegeString', header: 'PRIVILEGES' },
+        { field: 'userName', header: 'CREATED BY' },
 
     ];
 
-    const editRole = () => {
-        setOpenNewRoleDialog(true)
+    const viewCategory = () => {
+        setOpenViewCategoryDialog(true)
     };
 
-    const deleteRole = () => {
-        toast.current.show({ severity: 'info', summary: 'role deleted', detail: selectedRole.name });
+    const editCategory = () => {
+        setOpenNewCategoryDialog(true)
+    };
+
+    const deleteCategory = () => {
+        toast.current.show({ severity: 'info', summary: 'category deleted', detail: selectedCategory.name });
     };
 
     const openNew=()=>{
-        setOpenNewRoleDialog(true);
+        setOpenNewCategoryDialog(true);
     }
 
     const onGlobalFilterChange = (e) => {
@@ -95,7 +103,7 @@ const Roles =  () => {
     const renderHeader = () => {
         return (
             <div className={'flex flex-row justify-content-between'}>
-                <h2 className="m-0">Roles List</h2>
+                <h2 className="m-0">Categories List</h2>
                 <span className="p-input-icon-left">
                     <i className="pi pi-search" />
                     <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" variant={'standard'}/>
@@ -105,9 +113,9 @@ const Roles =  () => {
     };
 
     const menuModel = [
-        { label: 'View', icon: 'pi pi-fw pi-hourglass', command: () => viewRole() },
-        { label: 'Edit', icon: 'pi pi-fw pi-pencil', command: () => editRole() },
-        { label: 'Delete', icon: 'pi pi-fw pi-times', command: () => deleteRole() }
+        { label: 'View', icon: 'pi pi-fw pi-hourglass', command: () => viewCategory() },
+        { label: 'Edit', icon: 'pi pi-fw pi-pencil', command: () => editCategory() },
+        { label: 'Delete', icon: 'pi pi-fw pi-times', command: () => deleteCategory() }
     ];
 
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
@@ -120,8 +128,8 @@ const Roles =  () => {
         import('jspdf').then((jsPDF) => {
             import('jspdf-autotable').then(() => {
                 const doc = new jsPDF.default(0, 0);
-                doc.autoTable(exportColumns, roles);
-                doc.save('roles.pdf');
+                doc.autoTable(exportColumns, categories);
+                doc.save('categories.pdf');
             });
         });
     };
@@ -144,8 +152,10 @@ const Roles =  () => {
     };
 
     const refresh=(data)=>{
-        setRoles(data);
-        // setRoles(data);
+        let cats=data?.map(d=>{
+            return {...d,userName:d?.createdBy?.userName,industry:d?.industry?.name};
+        })
+        setCategories(cats);
     }
 
     const showSuccessFeedback=()=>{
@@ -165,12 +175,12 @@ const Roles =  () => {
                 <Tooltip target=".export-buttons>button" position="bottom" />
                 <ContextMenu model={menuModel} ref={cm} onHide={()=>null} />
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}/>
-                <DataTable ref={dt} value={roles}  tableStyle={{ minWidth: '50rem' }} paginator={true} rows={5} header={renderHeader}
-                           filters={filters} filterDisplay="menu" globalFilterFields={['name', 'privileges',  'active', 'dateCreated']}
+                <DataTable ref={dt} value={categories}  tableStyle={{ minWidth: '50rem' }} paginator={true} rows={5} header={renderHeader}
+                           filters={filters} filterDisplay="menu" globalFilterFields={['name', 'description',  'industry']}
                            onContextMenu={(e) => cm.current.show(e.originalEvent)} stripedRows={true}
                            rowsPerPageOptions={[5,10, 25, 50]} dataKey="id" resizableColumns showGridlines
                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                           contextMenuSelection={selectedRole} onContextMenuSelectionChange={(e) => setSelectedRole(e.value)}>
+                           contextMenuSelection={selectedCategory} onContextMenuSelectionChange={(e) => setSelectedCategory(e.value)}>
                     {cols?.map((col,index)=>{
                         return <Column key={index}  field={col?.field} header={col?.header} />
                     })
@@ -181,36 +191,33 @@ const Roles =  () => {
                 <Dialog header={()=>{
                     return <div style={{textDecoration:'underline', textDecorationColor:'forestgreen', paddingLeft:20, paddingRight:10}}>
                         <Typography component="h1" variant="h3" color={'green'}>
-                            {selectedRole && selectedRole?.id ? selectedRole?.name:"New Role"}
+                            {selectedCategory && selectedCategory?.id ? selectedCategory?.name:"New Category"}
                         </Typography>
                     </div>
-                }} visible={openNewRoleDialog} style={{ width: '70vw' }} onHide={() => setOpenNewRoleDialog(false)}>
-                    <EditRoleDialog role={selectedRole} setEditRoleDialogVisible={setOpenNewRoleDialog} openNewUserDialog={openNewRoleDialog}
-                                    token={token} setRolesData={refresh} showSuccessFeedback={showSuccessFeedback} showErrorFeedback={showErrorFeedback}/>
+                }} visible={openNewCategoryDialog} style={{ width: '70vw' }} onHide={() => setOpenNewCategoryDialog(false)}>
+                    <EditCategoryDialog selectedCategory={selectedCategory} setEditCategoryDialogVisible={setOpenNewCategoryDialog} openNewUserDialog={openNewCategoryDialog}
+                                    token={token} setCategorysData={refresh} showSuccessFeedback={showSuccessFeedback} showErrorFeedback={showErrorFeedback}/>
                 </Dialog>
 
                 <Dialog header={()=>{
                     return <div style={{textDecoration:'underline', textDecorationColor:'forestgreen', paddingLeft:20, paddingRight:10}}>
                         <Typography component="h1" variant="h3" color={'green'}>
-                            {'VIEW ROLE :: '+selectedRole?.name}
+                            {'VIEW CATEGORY :: '+selectedCategory?.name}
                         </Typography>
                     </div>
-                }} visible={openViewRoleDialog} style={{ width: '60vw' }} onHide={() => setOpenViewRoleDialog(false)}>
+                }} visible={openViewCategoryDialog} style={{ width: '60vw' }} onHide={() => setOpenViewCategoryDialog(false)}>
                    <div className={'grid'}>
-                       <div className="col-6 sm:col-6">Role Name</div>
-                       <div className="col-6 sm:col-6">{selectedRole?.name}</div>
+                       <div className="col-6 sm:col-6">Category Name</div>
+                       <div className="col-6 sm:col-6">{selectedCategory?.name}</div>
 
-                       <div className="col-6 sm:col-6">Role privileges</div>
-                       <div className="col-6 sm:col-6">{selectedRole?.privileges?.map(p=>p?.name+', ')}</div>
-
-                       <div className="col-6 sm:col-6">Role Active</div>
-                       <div className="col-6 sm:col-6">{selectedRole?.active?.toString()}</div>
+                       <div className="col-6 sm:col-6">Category Active</div>
+                       <div className="col-6 sm:col-6">{selectedCategory?.active?.toString()}</div>
 
                        <div className="col-6 sm:col-6">Date Created</div>
-                       <div className="col-6 sm:col-6">{selectedRole?.dateCreated}</div>
+                       <div className="col-6 sm:col-6">{selectedCategory?.dateCreated}</div>
 
                        <div className="col-6 sm:col-6">Created By</div>
-                       <div className="col-6 sm:col-6">{selectedRole?.createdBy?.toString()}</div>
+                       <div className="col-6 sm:col-6">{selectedCategory?.createdBy?.userName?.toString()}</div>
                    </div>
                 </Dialog>
 
@@ -219,4 +226,4 @@ const Roles =  () => {
     )
 }
 
-export default Roles;
+export default Category;

@@ -94,7 +94,7 @@ const Users =  () => {
     const userData=useFetch('/api/users/',token,['get','users']);
     useEffect(()=>{
         setUsers(userData?.data);
-    },[userData?.data])
+    },[])
 
     const cols = [
         { field: 'firstName', header: 'FIRST NAME' },

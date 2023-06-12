@@ -8,10 +8,11 @@ import NewBusiness from "./screens/underwriting/new.business";
 import Renewals from "./screens/underwriting/renewals";
 import Receipts from "./screens/finance/Receipts";
 import Settings from "./screens/admin/Settings";
+import Industry from "./screens/product/industry.jsx";
+import Category from "./screens/product/category.jsx";
+import Product from "./screens/product/product.jsx";
 import Roles from "./screens/admin/roles";
 import Privileges from "./screens/admin/privileges";
-import Loader from "./query/Loader/Loader";
-import {CheckLogin} from "./auth/check.login";
 
 function App() {
 
@@ -28,6 +29,9 @@ function App() {
                     <Route path="/roles" element={<Roles />} />
                     <Route path="/privileges" element={<Privileges />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/industry" element={<Industry />} />
+                    <Route path="/category" element={<Category />} />
+                    <Route path="/product" element={<Product />} />
                     <Route path="/" element={<Login />} />
                 </Routes>
 

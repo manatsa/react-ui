@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -33,9 +33,11 @@ export default function AppMenu() {
     const {isExpired} = useJwt(token);
     const toast = useRef(null);
     const userMenu = useRef(null);
-    const underwritingMenu = useRef(null);
-    const financeMenu = useRef(null);
-    const generalMenu = useRef(null);
+    const [appName, setAppName]= useState('');
+
+    useEffect(()=>{
+        setAppName("ROYAL TRADE")
+    },[])
 
     const [profileVisible, setProfileVisible]= useState(false);
     const [changePasswordVisible, setChangePasswordVisible]= useState(false);
@@ -106,7 +108,7 @@ export default function AppMenu() {
                     label: 'Users',
                     icon: 'pi pi-fw pi-users',
                     command: ()=>{
-                        if(token && !isExpired){
+                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/users");
                             setOpen(false);
                         }else{
@@ -118,7 +120,7 @@ export default function AppMenu() {
                     label: 'Roles',
                     icon: 'pi pi-fw pi-lock-open',
                     command: ()=>{
-                        if(token && !isExpired){
+                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/roles");
                             setOpen(false);
                         }else{
@@ -130,7 +132,7 @@ export default function AppMenu() {
                     label: 'Privileges',
                     icon: 'pi pi-fw pi-wrench',
                     command: ()=>{
-                        if(token && !isExpired){
+                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/privileges");
                             setOpen(false);
                         }else{
@@ -142,7 +144,7 @@ export default function AppMenu() {
                     label: 'Settings',
                     icon: 'pi pi-fw pi-cog',
                     command: ()=>{
-                        if(token && !isExpired){
+                        if(token && !isExpired && JSON.parse(login)?.roles?.includes('ADMIN')){
                             navigate("/settings");
                             setOpen(false);
                         }else{
@@ -161,16 +163,16 @@ export default function AppMenu() {
         },
         {
 
-            label: 'Underwriting Admin',
+            label: 'Industry Admin',
             icon: 'pi pi-fw pi-folder-open',
             expanded: JSON.parse(login)?.roles?.includes('UNDERWRITING'),
             items: [
                 {
-                    label: 'New Business',
+                    label: 'Industry Admin',
                     icon: 'pi pi-fw pi-plus',
                     command: ()=>{
                         if(token && !isExpired){
-                            navigate("/new/business")
+                            navigate("/industry")
                             setOpen(false)
                         }else{
                             showToast(toast,"error", "Error 401: Access Denied","You are not authorized to access this resource, please login with privileged account.");
@@ -179,11 +181,11 @@ export default function AppMenu() {
                     }
                 },
                 {
-                    label: 'Renewals',
+                    label: 'Category',
                     icon: 'pi pi-fw pi-undo',
                     command: ()=>{
                         if(token && !isExpired){
-                            navigate("/renewals")
+                            navigate("/category")
                             setOpen(false)
                         }else{
                             showToast(toast,"error", "Error 401: Access Denied","You are not authorized to access this resource, please login with privileged account.");
@@ -200,16 +202,16 @@ export default function AppMenu() {
             ]
         },
         {
-            label: 'Finance Admin',
+            label: 'Product Admin',
             icon: 'pi pi-fw pi-dollar',
             expanded:JSON.parse(login)?.roles?.includes('FINANCE'),
             items: [
                 {
-                    label: 'Receipts',
+                    label: 'Product Admin',
                     icon: 'pi pi-fw pi-paperclip',
                     command: ()=>{
                         if(token && !isExpired){
-                            navigate("/receipts");
+                            navigate("/product");
                             setOpen(false);
                         }else{
                             showToast(toast,"error", "Error 401: Access Denied","You are not authorized to access this resource, please login with privileged account.");
@@ -280,7 +282,7 @@ export default function AppMenu() {
                             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
                             className={'flex justify-content-center'}
                         >
-                            <a href={''} onClick={()=>navigate("/home")} style={{color:'white'}}> ZIMNAT LION INSURANCE </a>
+                            <a href={''} onClick={()=>navigate("/home")} style={{color:'white'}}> {appName} </a>
                         </Typography>
 
                         <UserMenu userMenu={userMenu} login={login} changeColor={true} />

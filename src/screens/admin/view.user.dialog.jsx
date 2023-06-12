@@ -10,46 +10,55 @@ console.log(user)
         <>
             <Container >
                 <Panel header={`${user?.firstName} ${user?.lastName}`} className={'success'}>
-                    <table>
-                        <thead>
-                            <th>Property</th>
-                            <th>Value</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>First Name</td>
-                                <td>${user?.firstName}</td>
-                            </tr>
-                            <tr>
-                                <td>Last Name</td>
-                                <td>${user?.lastName}</td>
-                            </tr>
-                            <tr>
-                                <td>User Name</td>
-                                <td>${user?.userName}</td>
-                            </tr>
-                            <tr>
-                                <td>User Level</td>
-                                <td>${user?.userLevel}</td>
-                            </tr>
-                            <tr>
-                                <td>Active</td>
-                                <td>${user?.active?.toString()}</td>
-                            </tr>
-                            <tr>
-                                <td>User Roles</td>
-                                <td>${user?.roles?.map(r=>r?.name+', ')}</td>
-                            </tr>
-                            <tr>
-                                <td>Date Created</td>
-                                <td>${user?.dateCreated}</td>
-                            </tr>
-                            <tr>
-                                <td>Created By</td>
-                                <td>${user?.createdBy}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div className={'grid'}>
+                        <div className={'col-6 sm:col-6'}>
+                            First Name
+                        </div>
+                        <div className="col-6 sm:col-6">
+                            {user?.firstName}
+                        </div>
+
+
+                        <div className={'col-6 sm:col-6 surface-100'}>
+                            Last Name
+                        </div>
+                        <div className="col-6 sm:col-6 surface-100">
+                            {user?.lastName}
+                        </div>
+
+
+                        <div className={'col-6 sm:col-6'}>
+                            User Level
+                        </div>
+                        <div className="col-6 sm:col-6">
+                            {user?.userLevel}
+                        </div>
+
+
+                        <div className={'col-6 sm:col-6 surface-100'}>
+                            Active
+                        </div>
+                        <div className="col-6 sm:col-6 surface-100">
+                            {user?.active?.toString()}
+                        </div>
+
+
+                        <div className={'col-6 sm:col-6'}>
+                            User Roles
+                        </div>
+                        <div className="col-6 sm:col-6">
+                            {user?.roles?.map(r=>r?.name+', ')}
+                        </div>
+
+
+                        <div className={'col-6 sm:col-6 surface-100'}>
+                            Date Created
+                        </div>
+                        <div className="col-6 sm:col-6 surface-100">
+                            {user?.dateCreated}
+                        </div>
+
+                    </div>
                     <div className={'flex justify-content-end'}>
                         <Button  severity={'success'} outlined={true} type="button" label="Close" onClick={()=>setShowViewUserDialog(false)} />
                     </div>

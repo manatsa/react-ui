@@ -13,6 +13,7 @@ const doUpdate = async (url, token, id, data ) => {
         throw new Error('Error:: '+response?.statusText);
     }
 
+
     return response.json();
 };
 
