@@ -1,9 +1,5 @@
 import React from 'react';
-import AppFooterBar from "./AppFooterBar.jsx";
 import AppMenu from "./AppMenu";
-import {useNavigate} from "react-router-dom";
-import Login from "../screens/login";
-import {Container} from "@mui/material";
 import Box from "@mui/material/Box";
 
 const Layout =({children})=>{
@@ -15,9 +11,9 @@ const Layout =({children})=>{
                         <AppMenu />
                    </Box>
                    <div style={{width:'100%'}} className={'flex justify-content-center align-self-start align-items-start'} >
-                       <Container className={'w-full   sm:p-0'}>
+                       <div className={'w-full align-items-start'}>
                            {children}
-                       </Container>
+                       </div>
                    </div>
                </Box>
 

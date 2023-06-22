@@ -7,7 +7,7 @@ import {ProgressSpinner} from "primereact/progressspinner";
 import { Button } from 'primereact/button';
 import {InputText} from "primereact/inputtext";
 import {Dialog} from "primereact/dialog";
-import {Tab, Tabs, Typography} from "@mui/material";
+import {Drawer, Tab, Tabs, Typography} from "@mui/material";
 import {doFetch} from "../../query/doFetch.js";
 import {getLogin} from "../../auth/check.login";
 import EditProductDialog from "./edit.product.dialog.jsx";
@@ -19,24 +19,35 @@ import {OverlayPanel} from "primereact/overlaypanel";
 import Box from "@mui/material/Box";
 import { SupervisorAccountOutlined, DescriptionOutlined } from '@mui/icons-material';
 import TabPanel from "../../components/TabPanel.jsx";
+import {ScrollPanel} from "primereact/scrollpanel";
+import './product.css';
 
 const Product =  () => {
 
 
     const {token, login}=getLogin();
-    const {isExpired} =useJwt(token);
-    const navigate=useNavigate();
     const toast= useRef(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [openNewProductDialog, setOpenNewProductDialog] = useState(false);
     const [openViewProductDialog, setOpenViewProductDialog] = useState(false);
     const [products, setProducts]=useState([]);
     const [filteredProducts, setFilteredProducts]=useState([]);
+    const [professionals, setProfessionals] = useState();
+    const [filteredProfessionals, setFilteredProfessionals]=useState([]);
     const [layout, setLayout] = useState('grid');
     const [rows, setRows] = useState(6);
     const [searchValue, setSearchValue] = useState('');
     const [activeTab, setActiveTab] =useState(0);
+    const [showSideBar, setShowSideBar] = useState(true);
+    const [industry, setIndustry] = useState(null)
 
+    const productDataOverlayRef=createRef();
+    const professionalDataOverlayRef = createRef();
+
+
+    const [selectedCategories, setCategories] = useState([])
+
+    const drawerWidth = 240;
     const location = useLocation();
     const paramArr = location['search']?.split('?');
     let refreshParam=null;
@@ -45,6 +56,9 @@ const Product =  () => {
     }
 
     let {data, error, isError, isLoading }=doFetch('/api/products/',token,['get',refreshParam,'product']);
+    let industryMutation =doFetch('/api/category/',token,['get','industry']);
+    let categoryMutation =doFetch('/api/category/',token,['get','category']);
+
 
     const logins=login && login!=='undefined' ? JSON.parse(login) : null;
 
@@ -250,13 +264,13 @@ const Product =  () => {
         const productHeader=(
             <div className={'flex flex-row surface-200 border-round border-0 p-2'} onClick={e=>op?.current?.toggle(e)}>
                 <i className="pi pi-calculator p-1" style={{ color: 'forestgreen' }}></i>
-                <div className="text-2xl font-bold p-1 text-green-800">{product.name}</div>
+                <div className="text-2xl font-bold p-1 text-orange-500">{product.name}</div>
             </div>
         )
         return (
             <div className="col-12 sm:col-6 lg:col-12 xl:col-4 p-2" key={product?.id} >
                 <Fieldset className="p-4 border-2 surface-border surface-card border-round" legend={productHeader}>
-                    <p className="text-sm font-italic text-green-600 text-500">{product.description}</p>
+                    <p className="text-sm font-italic text-blue-600">{product.description}</p>
                     <div className="flex flex-column align-items-center gap-3">
                         <img className="w-9 shadow-2 border-round col-12 h-9rem" alt={product.name}
                              src={`data:image/bmp;base64,${product?.picture}`} onClick={e=>op?.current?.toggle(e)}
@@ -265,7 +279,7 @@ const Product =  () => {
 
                         <div className="flex flex-wrap align-items-center justify-content-between gap-2">
                             <div className="flex align-items-center justify-content-start">
-                                <span className="text-2xl font-semibold">${product.price?.toFixed(2)}</span>
+                                <span className="text-2xl font-semibold text-orange-700">${product.price?.toFixed(2)}</span>
                             </div>
                             <div>
                                 <span className="font-bold text-2xl p-1">{product?.industry}</span>
@@ -283,16 +297,12 @@ const Product =  () => {
                                 product.tags?.split(',').map(tag=>{
                                     return(
                                         <div className="flex flex-row">
-                                            <Tag className={'m-1'} key={`tag-grid-${tag}`} value={tag} severity={getSeverity(product)}></Tag>
+                                            <Tag className={'m-1'} key={`tag-grid-${tag}`} value={tag} severity={'success'}></Tag>
                                         </div>
                                     )
                                 })
                             }
                         </div>
-                        {/*<div className="col-12 flex flex-row p-2">
-                            <Tag value={product?.owner} severity={'danger'} />
-                            <Tag value={isProductAdmin?.toString()} severity={'danger'} />
-                        </div>*/}
                     </div>
                     <OverlayPanel ref={op}>
                         <img className="w-full shadow-2 border-round col-12 h-full" src={`data:image/bmp;base64,${product?.picture}`} alt={product.name} />
@@ -300,8 +310,7 @@ const Product =  () => {
 
 
                         <div style={{position: 'relative'}} className={'flex justify-content-around align-items-end'}>
-                            <Button icon="pi pi-shopping-cart" className="p-button-rounded"
-                                    disabled={product.inventoryStatus === 'OUTOFSTOCK'}></Button>
+
                             <Button icon="pi pi-eye" className="p-button-rounded" onClick={()=>{
                                 setSelectedProduct(product);
                                 setOpenViewProductDialog(true)
@@ -314,6 +323,7 @@ const Product =  () => {
                                        hideIcon="pi pi-times"/>
                                 }
                             </div>
+                            <Button icon="pi pi-shopping-cart" className="p-button-rounded bg-orange-600"></Button>
                     </div>
 
                 </Fieldset>
@@ -415,13 +425,19 @@ const Product =  () => {
 
 
     const switchTabs=(tabIndex)=>{
-        setActiveTab(value)
+        setActiveTab(tabIndex)
         if(tabIndex===0) {
             let productsData = doFetch('/api/products/', token, ['get', refreshParam, 'product']);
             setProducts(productsData?.data)
         }else if(tabIndex===1){
-            let professionalsData = doFetch('/api/products/', token, ['get', refreshParam, 'product']);
+            let professionalsData = doFetch('/api/professionals/', token, ['get', refreshParam, 'professional']);
+            setProfessionals(professionalsData?.data||[]);
+            setFilteredProfessionals(professionalsData?.data||[])
         }
+    }
+
+    const onSelectIndustry=(industry)=>{
+
     }
 
 
@@ -430,21 +446,63 @@ const Product =  () => {
             <Toast ref={toast} position={'center'} />
             {isLoading && <div className="card flex justify-content-center"> <ProgressSpinner style={{zIndex:1000}}/></div>}
 
+            <div className="grid">
+                {/*industry strip */}
+                <div className="col-12">
 
-                <Tabs value={activeTab} onChange={(e, value)=>switchTabs(value)} className={'mt-0'} sx={{mt:11}} >
-                    <Tab label={"Product List"} iconPosition={'start'} icon={<DescriptionOutlined />}  style={{color:'dodgerblue'}}/>
-                    <Tab label={"Professional Services"} iconPosition={'start'} icon={<SupervisorAccountOutlined />} style={{color:'dodgerblue'}}/>
-                </Tabs>
-                <TabPanel value={activeTab} index={0}>
-                    <div className="card">
-                        <DataView  value={filteredProducts} itemTemplate={itemTemplate} layout={layout} header={productHeader()} rows={rows} paginator={true} />
-                    </div>
-                </TabPanel>
-                <TabPanel value={activeTab} index={1}>
-                    <div className="card">
-                        <DataView  value={filteredProducts} itemTemplate={itemTemplate} layout={layout} header={professionalHeader()} rows={rows} paginator={true} />
-                    </div>
-                </TabPanel>
+                </div>
+                <div className="col col-12">
+                    <Tabs value={activeTab} onChange={(e, value)=>switchTabs(value)} className={'mt-0'} sx={{mt:11}} >
+                        <Tab label={"Product List"} iconPosition={'start'} icon={<DescriptionOutlined />}  style={{color:'dodgerblue'}}/>
+                        <Tab label={"Professional Services"} iconPosition={'start'} icon={<SupervisorAccountOutlined />} style={{color:'dodgerblue'}}/>
+                    </Tabs>
+                    <TabPanel value={activeTab} index={0}>
+                        <div className="card flex flex-row">
+                            <div className="col-2 pt-5">
+                                <div className="flex-auto">
+                                    <ScrollPanel style={{ width: '100%' }} className="custom-scrollbar">
+                                        <div className="card flex flex-column">
+                                            {
+                                                industryMutation?.data?.map(industry=>{
+                                                    return <div className={'col-12'}><Button className={'col-12'} icon="pi pi-bolt" label={industry?.name} onClick={(e) =>onSelectIndustry(industry)} /></div>
+                                                })
+                                            }
+                                        </div>
+                                    </ScrollPanel>
+                                </div>
+                            </div>
+                            <div className={'col-10'}>
+                                <DataView  value={filteredProducts} itemTemplate={itemTemplate} layout={layout} header={productHeader()} rows={rows} paginator={true} />
+                            </div>
+                        </div>
+                        <OverlayPanel ref={productDataOverlayRef}>
+                            <img src={'https://primefaces.org/cdn/primereact/images/product/bamboo-watch.jpg'} alt="Bamboo Watch"></img>
+                        </OverlayPanel>
+                    </TabPanel>
+                    <TabPanel value={activeTab} index={1}>
+                        <div className="card flex flex-row">
+                            <div className="col-2 pt-5">
+                                <div className="flex-auto">
+                                    <ScrollPanel style={{ width: '100%' }} className="custom-scrollbar">
+                                        <div className="card flex flex-column">
+                                            {
+                                                industryMutation?.data?.map(industry=>{
+                                                    return <div className={'col-12'}><Button className={'col-12'} icon="pi pi-bolt" label={industry?.name} onClick={(e) =>onSelectIndustry(industry)} /></div>
+                                                })
+                                            }
+                                        </div>
+                                    </ScrollPanel>
+                                </div>
+                            </div>
+                            <div className={'col-10'}>
+                            <DataView  value={filteredProfessionals} itemTemplate={itemTemplate} layout={layout} header={professionalHeader()} rows={rows} paginator={true} />
+
+                            </div>
+                        </div>
+                    </TabPanel>
+                </div>
+            </div>
+
 
 
 

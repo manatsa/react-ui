@@ -1,3 +1,5 @@
-.add-padding{
-   margin-bottom: 100px;
+
+
+.p-scrollpanel-bar-x, .p-scrollpanel-bar-y{
+   background-color: dodgerblue !important;
 }
