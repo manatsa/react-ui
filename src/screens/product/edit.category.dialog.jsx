@@ -8,7 +8,7 @@ import { classNames } from 'primereact/utils';
 import {useNavigate} from "react-router-dom";
 import {ProgressSpinner} from "primereact/progressspinner";
 import {useMutation} from "@tanstack/react-query";
-import {useFetch} from "../../query/useFetch.js";
+import {doFetch} from "../../query/doFetch.js";
 import doUpdate from "../../query/doUpdate.js";
 import {InputTextarea} from "primereact/inputtextarea";
 import AppAutocomplete from "../../components/AppAutocomplete.jsx";
@@ -31,13 +31,13 @@ const EditCategoryDialog=({setEditCategoryDialogVisible, selectedCategory, token
         }
     });
 
-    const industryMutation=useFetch('/api/industry/',token, ['get',selectedCategory?.id,'industry'])
+    const industryMutation=doFetch('/api/industry/',token, ['get',selectedCategory?.id,'industry'])
 
 
     const initialValues={
         id:selectedCategory?.id ||'',
         name:selectedCategory?.name||'',
-        industry:{name:selectedCategory?.industry?.name,id:selectedCategory?.industry?.id} ||{},
+        industry:{name:selectedCategory?.industry?.name,id:selectedCategory?.industry?.id} || undefined,
         description: selectedCategory?.description || '',
     }
 
@@ -46,6 +46,7 @@ const EditCategoryDialog=({setEditCategoryDialogVisible, selectedCategory, token
         industry: yup.object().required("Please select industry name for this category."),
         description: yup.string(),
     })
+
     const onSubmit= (values)=>{
         const category={...values,...{industry:values['industry']?.id}};
         mutate({id:values['id'],category})

@@ -14,7 +14,7 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import {InputText} from "primereact/inputtext";
 import {Dialog} from "primereact/dialog";
 import {Typography} from "@mui/material";
-import {useFetch} from "../../query/useFetch.js";
+import {doFetch} from "../../query/doFetch.js";
 import {getLogin} from "../../auth/check.login";
 import EditIndustryDialog from "./edit.industry.dialog.jsx";
 
@@ -54,7 +54,7 @@ const Industry =  () => {
 
 
 
-    const {data, error, isError, isLoading }=useFetch('/api/industry/',token,['get','industry']);
+    const {data, error, isError, isLoading }=doFetch('/api/industry/',token,['get','industry']);
 
     useEffect(()=>{
         let inds=data?.map(d=>{

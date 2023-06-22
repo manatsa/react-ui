@@ -1,29 +1,52 @@
 import React, {useState} from 'react';
-import {InputText} from "primereact/inputtext";
-import {InputTextarea} from "primereact/inputtextarea";
-import {Calendar} from "primereact/calendar";
-import {SelectButton} from "primereact/selectbutton";
-import {InputField, RadioField, SelectField} from "formik-stepper";
-import {AutoComplete} from "primereact/autocomplete";
+import AppFormSelectField from "../../../components/form/AppFormSelectField.jsx";
+import AppFormCalendar from "../../../components/form/AppFormCalendar.jsx";
+import AppForm from "../../../components/form/AppForm.jsx";
+import {doFetch} from "../../../query/doFetch.js";
+import AppFormAutocomplete from "../../../components/form/AppFormAutocomplete";
+import {Field} from "formik";
+import {Dropdown} from "primereact/dropdown";
 
-const ProductStep3 =({errors, values, handleChange})=>{
+const ProductStep3 =({initValues, validationSchema, onNextStep, onBack, token})=>{
 
-    const discountTypes=[
-        {label: 'Percentage', value:'percent'},
-        {label: 'Literal', value: 'val'},
-        {label:'Coupon', value:'coupon'}
-    ]
+    const [industry, setIndustry] = useState(null)
+    const industryMutation=doFetch('/api/industry/',token,['get','industry']);
+    const categoryMutation=doFetch(industry?`/api/category/industry/${industry}`:'/api/category/',token,['get',industry,'industry']);
+
+    const {data}=doFetch('/api/users/',token,['get','users']);
+    const items=data?.map(d=>{
+        return {...d, name: d?.firstName+' '+d?.lastName};
+    })
+
 
     return (
         <>
             <div className={'grid'}>
-                <div className="col-12">
-                    <AutoComplete   placeholder={'Discount Type'} name={'discountType'} options={discountTypes} value={values['discountType']} onChange={handleChange} />
-                    <InputText style={{width:'100%'}}  placeholder={'Product Discount'} value={values['discount']} name={'discount'} onChange={handleChange} />
-                    <InputText placeholder={'Coupon'} name="coupon" style={{width:'100%'}} value={values['coupon']} onChange={handleChange} />
-                    <Calendar dateFormat={'dd/mm/yy'} id="promotionStart" name="promotionStart" style={{width:'100%'}} value={values['promotionStart']} />
-                    <Calendar dateFormat={'dd/mm/yy'} id="promotionEnd" name="promotionEnd" style={{width:'100%'}} value={values['promotionEnd']} />
-                </div>
+                <AppForm
+                    initialValues={initValues}
+                    validationSchema={validationSchema}
+                    onSubmit={onNextStep}
+                    onBack={onBack}
+                >
+
+                    <Field name={'owner'} as={AppFormAutocomplete} style={{width:'100%'}} field={'name'} items={items} label={'Select Owner'} dropdown={false} />
+
+                    <div className={'col-12 p-3'}>
+                        <span className="p-float-label">
+                        <Dropdown options={industryMutation?.data||[]} value={industry} optionValue={'id'} optionLabel={'name'} onChange={e=>{
+                            setIndustry(e.value)
+                        }} style={{width:'100%', marginTop:5, marginBottom:5}} />
+                            <label>Select Industry</label>
+                        </span>
+                    </div>
+
+                    {/*<Field name={'industry'} as={AppFormMultiSelect} items={industryMutation.data} label={'Select Industries'} display={'chip'}/>
+*/}
+                    <Field name={'category'} as={AppFormSelectField} options={categoryMutation?.data || []} optionValue={'id'} optionLabel={'name'} label={'Category'} />
+
+                    <AppFormCalendar name={'effectiveDate'} label={'Product Effective Date'} dateFormat={'dd/mm/yy'} />
+
+                </AppForm>
             </div>
         </>
     )

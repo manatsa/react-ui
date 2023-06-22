@@ -6,20 +6,11 @@ import {Toast} from "primereact/toast";
 import {ProgressSpinner} from "primereact/progressspinner";
 import {InputText} from "primereact/inputtext";
 import {classNames} from "primereact/utils";
-import {Dropdown} from "primereact/dropdown";
-import {Checkbox} from "primereact/checkbox";
-import {MultiSelect} from "primereact/multiselect";
 import {Button} from "primereact/button";
 import * as yup from "yup";
-import PostToApi from "../../api/postToAPI";
-import showToast from "../../notifications/showToast";
 import {useFormik} from "formik";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import {useFetch} from "../../query/useFetch.js";
-import {getLogin} from "../../auth/check.login";
 import {useMutation} from "@tanstack/react-query";
 import doUpdate from "../../query/doUpdate.js";
-import AppAutocomplete from "../../components/AppAutocomplete.jsx";
 
 const EditPrivilegeDialog = ({openNewPrivilegeDialog,setEditPrivilegeDialogVisible, privilege, token,setPrivilegesData, showSuccessFeedback, showErrorFeedback}) =>{
     const toast=useRef(null);

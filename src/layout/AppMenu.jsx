@@ -19,6 +19,7 @@ import UserMenu from "./userMenu";
 import {PanelMenu} from "primereact/panelmenu";
 import './app.menu.css'
 import {getLogin} from "../auth/check.login";
+import {PrimaryColor} from "../components/Constants.jsx";
 
 
 
@@ -34,16 +35,19 @@ export default function AppMenu() {
     const toast = useRef(null);
     const userMenu = useRef(null);
     const [appName, setAppName]= useState('');
+    const [logged, setLogged] = useState(false);
 
     // alert(login!=='undefined')
     useEffect(()=>{
-        setAppName("ROYAL TRADE")
-    },[])
+        setAppName("A . B . M")
+        setLogged(true)
+    },[appName,login])
 
     const [profileVisible, setProfileVisible]= useState(false);
     const [changePasswordVisible, setChangePasswordVisible]= useState(false);
 
-    const userMenuItems = [
+    const userMenuItems =
+        [
         {
             label: 'User Operations',
             items: [
@@ -85,7 +89,8 @@ export default function AppMenu() {
             }
         }
     ];
-    const items = [
+    const items =
+        [
         {
             label: 'Home',
             icon: 'pi pi-fw pi-home',
@@ -220,7 +225,7 @@ export default function AppMenu() {
                     }
                 },
                 {
-                    label: 'Payments',
+                    label: 'Subscriptions',
                     icon: 'pi pi-fw pi-shopping-cart',
                     command: ()=>{
                         if(token && !isExpired){
@@ -254,44 +259,45 @@ export default function AppMenu() {
     }
 
     return (
-        <Box sx={{ display: 'flex' }} className={'appBar'}>
+        <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar component="nav" style={{backgroundColor:'forestgreen'}} >
+            <AppBar component="nav" style={{backgroundColor:PrimaryColor}}>
                 <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={()=>{
-                            if(token!==null && login!==null){
-                                setOpen(true)
-                            }else{
-                                showToast(toast,'error','Access denied!','Please login to have access to the menu!')
-                            }
-                        }}
-                    >
-                        { login && token && <MenuIcon style={{marginRight:10}}/>}
+                    <div className={' flex flex-row align-items-center'}>
+                        <IconButton
+                            size="medium"
+                            edge="start"
+                            style={{color:'white'}}
+                            sx={{ mr: 2 }}
+                            onClick={()=>{
+                                if(token!==null && login!==null){
+                                    setOpen(true)
+                                }else{
+                                    showToast(toast,'error','Access denied!','Please login to have access to the menu!')
+                                }
+                            }}
+                        >
+                            { login && token && <MenuIcon style={{marginRight:10}}/>}
 
-                    </IconButton>
-
-                    <div className={'flex justify-content-between'} style={{width:'100%'}}>
+                        </IconButton>
                         <Typography
                             variant="h6"
                             component="div"
                             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-                            className={'flex justify-content-center'}
+                            className={'flex justify-content-center sx:col-0'}
                         >
-                            <a href={''} onClick={()=>navigate("/home")} style={{color:'white'}}> {appName} </a>
+                            <a className={'sx:col-0'} href={''} onClick={()=>navigate("/")} style={{color:'white'}}> {appName} </a>
                         </Typography>
+                    </div>
 
+
+                    <div className={'flex flex-1  justify-content-end}'}>
                         <UserMenu userMenu={userMenu} login={login} changeColor={true} />
                     </div>
                 </Toolbar>
             </AppBar>
 
-            <Menu model={userMenuItems} popup ref={userMenu} color={'green'} style={{backgroundColor: "white", color:'var(--primary-color-text)'}} />
+            <Menu model={userMenuItems} popup ref={userMenu} color={'green'} style={{backgroundColor: "white", color:PrimaryColor}} />
             <Toast ref={toast} position={'center'}/>
             <ProfileDialog visible={profileVisible} setVisible={setProfileVisible} data={login && login!=='undefined'?JSON.parse(login):null} />
             <ChangePasswordDialog  setChangePasswordVisible={setChangePasswordVisible} selectedUser={login && login!=='undefined'?JSON.parse(login):null}

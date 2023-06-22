@@ -1,67 +1,34 @@
 import React, {useState} from 'react';
 import {Button} from "primereact/button";
-import {InputText} from "primereact/inputtext";
-import {InputTextarea} from "primereact/inputtextarea";
-import {classNames} from "primereact/utils";
+import AppForm from "../../../components/form/AppForm.jsx";
+import AppFormTextField from "../../../components/form/AppFormTextField.jsx";
+import AppFormTextArea from "../../../components/form/AppFormTextArea.jsx";
+import {Field} from "formik";
+import AppFormInputNumber from "../../../components/form/AppFormInputNumber.jsx";
 
-const ProductStep1 =({setMergedValues, initValues, validationSchema, handleSubmit, formik})=>{
-
-    const isFormFieldInvalid = (name) => !!(formik.touched[name] && formik.errors[name]);
-
-    const getFormErrorMessage = (name) => {
-        return isFormFieldInvalid(name) ? <small className="p-error">{formik.errors[name]}</small> : <small className="p-error">&nbsp;</small>;
-    };
+const ProductStep1 =({initValues, validationSchema, onNextStep, onBack, token})=>{
 
     return (
         <>
-            <form onSubmit={handleSubmit} >
-                <div className={'grid'}>
+            <div className={'grid md:p-10'}>
+                <AppForm
+                    onSubmit={onNextStep}
+                    initialValues={initValues}
+                    validationSchema={validationSchema}
+                    isFirstStep={true}
+                    onBack={onBack}
+                >
 
-                    <div className={'col-12'}>
-                        <span className="p-float-label">
-                            <InputText id="name" name="name" value={formik.values['name']} onChange={(e) => {formik.setFieldValue('name', e.target.value);}}
-                                       className={classNames({ 'p-invalid': isFormFieldInvalid('name') })} style={{width:'100%'}}
-                            />
-                            <label htmlFor="name">Product Name</label>
-                        </span>
-                        {getFormErrorMessage('description')}
-                    </div>
+                    <Field name={'name'} as={AppFormTextField} label={'Product Name'} />
 
-                    <div className={'col-12'}>
-                        <span className="p-float-label">
-                            <InputText id="description" name="description" value={formik.values['description']} onChange={(e) => {formik.setFieldValue('description', e.target.value);}}
-                                           className={classNames({ 'p-invalid': isFormFieldInvalid('description') })} style={{width:'100%'}}
-                            />
-                            <label htmlFor="description">Product Description</label>
-                        </span>
-                        {getFormErrorMessage('description')}
-                    </div>
+                    <Field  name={'description'} as={AppFormTextArea} label={'Product Description'} />
 
-                    <div className={'col-12'}>
-                        <span className="p-float-label">
-                            <InputText id="price" name="price" value={formik.values['price']} onChange={(e) => {formik.setFieldValue('price', e.target.value);}}
-                                       className={classNames({ 'p-invalid': isFormFieldInvalid('price') })} style={{width:'100%'}}
-                            />
-                            <label htmlFor="price">Product Price</label>
-                        </span>
-                        {getFormErrorMessage('description')}
-                    </div>
+                    <Field  name={'price'} as={AppFormInputNumber}  label={'Product Price'} mode="currency" currency="USD"  suffix={' USD'} />
 
-                    <div className={'col-12'}>
-                        <span className="p-float-label">
-                            <InputText id="tags" name="tags" value={formik.values['tags']} onChange={(e) => {formik.setFieldValue('tags', e.target.value);}}
-                                       className={classNames({ 'p-invalid': isFormFieldInvalid('tags') })} style={{width:'100%'}}
-                            />
-                            <label htmlFor="tags">Comma (,) Separated Product Tags</label>
-                        </span>
-                        {getFormErrorMessage('tags')}
-                    </div>
+                    <Field  name={'tags'} as={AppFormTextField} label={'Product Tags'} placeholder={'Comma(,) Separated Tags'} />
 
-                </div>
-                <div className="col-12 flex justify-content-end p-5">
-                    <Button severity={'success'} label={'Next'} type={'submit'} />
-                </div>
-            </form>
+                </AppForm>
+            </div>
         </>
     )
 }

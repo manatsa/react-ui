@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 import showToast from "../../notifications/showToast";
 import {Toast} from "primereact/toast";
 import {ProgressSpinner} from "primereact/progressspinner";
-import GetFromAPI from "../../api/getFromAPI";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import { Button } from 'primereact/button';
@@ -16,7 +15,7 @@ import {InputText} from "primereact/inputtext";
 import {Dialog} from "primereact/dialog";
 import {Typography} from "@mui/material";
 import EditRoleDialog from "./edit.role.dialog.jsx";
-import {useFetch} from "../../query/useFetch.js";
+import {doFetch} from "../../query/doFetch.js";
 import {getLogin} from "../../auth/check.login";
 
 const Roles =  () => {
@@ -45,7 +44,6 @@ const Roles =  () => {
             navigate("/")
         }else {
             if(!logins['privileges']?.includes('ADMIN')){
-                console.log("Not admin")
                 showToast(toast,'error','Error 401: Access Denied','You do not have access to this resource!');
                 window.history.back()
             }
@@ -56,7 +54,7 @@ const Roles =  () => {
         setOpenViewRoleDialog(true)
     };
 
-    const {data, error, isError, isLoading }=useFetch('/api/roles/',token,['get','roles']);
+    const {data, error, isError, isLoading }=doFetch('/api/roles/',token,['get','roles']);
 
     useEffect(()=>{
         setRoles(data)
@@ -144,8 +142,15 @@ const Roles =  () => {
     };
 
     const refresh=(data)=>{
-        setRoles(data);
-        // setRoles(data);
+        const roles = data?.map(r=>{
+            let pr=r?.privileges?.map(p=>p.name);
+            let prString='';
+            pr.forEach(p=>{
+                prString+=p+','
+            })
+            return {...r,privileges:pr,privilegeString:prString?.substring(0, prString.length-1) }
+        })
+        setRoles(roles);
     }
 
     const showSuccessFeedback=()=>{

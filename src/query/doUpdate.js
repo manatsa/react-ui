@@ -12,9 +12,8 @@ const doUpdate = async (url, token, id, data ) => {
     if (!response.ok) {
         throw new Error('Error:: '+response?.statusText);
     }
-
-
-    return response.json();
+    const res=response.json();
+    return res;
 };
 
 export default doUpdate;

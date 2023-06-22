@@ -5,13 +5,10 @@ import {Toast} from "primereact/toast";
 import {InputText} from "primereact/inputtext";
 import {Button} from "primereact/button";
 import { classNames } from 'primereact/utils';
-import {Checkbox} from "primereact/checkbox";
 import {useNavigate} from "react-router-dom";
 import {ProgressSpinner} from "primereact/progressspinner";
 import {useMutation} from "@tanstack/react-query";
-import {useFetch} from "../../query/useFetch.js";
 import doUpdate from "../../query/doUpdate.js";
-import AppAutocomplete from "../../components/AppAutocomplete.jsx";
 import {InputTextarea} from "primereact/inputtextarea";
 
 const EditIndustryDialog=({openNewIndustryDialog,setEditIndustryDialogVisible, selectedIndustry, token, setIndustrysData, showErrorFeedback, showSuccessFeedback})=>{

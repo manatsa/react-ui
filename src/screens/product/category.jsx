@@ -14,7 +14,7 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import {InputText} from "primereact/inputtext";
 import {Dialog} from "primereact/dialog";
 import {Typography} from "@mui/material";
-import {useFetch} from "../../query/useFetch.js";
+import {doFetch} from "../../query/doFetch.js";
 import {getLogin} from "../../auth/check.login";
 import EditCategoryDialog from "./edit.category.dialog.jsx";
 
@@ -55,7 +55,7 @@ const Category =  () => {
 
 
 
-    const {data, error, isError, isLoading }=useFetch('/api/category/',token,['get','category']);
+    const {data, error, isError, isLoading }=doFetch('/api/category/',token,['get','category']);
 
     useEffect(()=>{
         let cats=data?.map(d=>{

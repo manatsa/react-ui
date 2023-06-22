@@ -1,7 +1,6 @@
 import React from 'react';
 import {Panel} from "primereact/panel";
 import {Container} from "@mui/material";
-import {Splitter, SplitterPanel} from "primereact/splitter";
 import {Button} from "primereact/button";
 
 const ViewUserDialog=({setShowViewUserDialog, user})=>{

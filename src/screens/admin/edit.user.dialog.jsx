@@ -9,7 +9,7 @@ import {Checkbox} from "primereact/checkbox";
 import {useNavigate} from "react-router-dom";
 import {ProgressSpinner} from "primereact/progressspinner";
 import {useMutation} from "@tanstack/react-query";
-import {useFetch} from "../../query/useFetch.js";
+import {doFetch} from "../../query/doFetch.js";
 import doUpdate from "../../query/doUpdate.js";
 import AppAutocomplete from "../../components/AppAutocomplete.jsx";
 
@@ -33,7 +33,7 @@ const EditUserDialog=({openNewUserDialog,setEditUserDialogVisible, selectedUser,
         }
     });
 
-    const rolesData=useFetch('api/roles/',token,['get',selectedUser?.id,'roles']);
+    const rolesData=doFetch('api/roles/',token,['get',selectedUser?.id,'roles']);
 
     const userLevels=[
         {name:'USER', code:'USER'},

@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 import showToast from "../../notifications/showToast";
 import {Toast} from "primereact/toast";
 import {ProgressSpinner} from "primereact/progressspinner";
-import GetFromAPI from "../../api/getFromAPI";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import { Button } from 'primereact/button';
@@ -16,7 +15,7 @@ import {InputText} from "primereact/inputtext";
 import {Dialog} from "primereact/dialog";
 import {Typography} from "@mui/material";
 import EditRoleDialog from "./edit.role.dialog.jsx";
-import {useFetch} from "../../query/useFetch.js";
+import {doFetch} from "../../query/doFetch.js";
 import {getLogin} from "../../auth/check.login";
 import EditPrivilegeDialog from "./edit.privilege.dialog.jsx";
 
@@ -57,7 +56,7 @@ const Privileges =  () => {
         toast.current.show({ severity: 'info', summary: 'role Selected', detail: selectedPrivilege.name });
     };
 
-    const {data, error, isError, isLoading }=useFetch('/api/privileges/',token,['get','privileges']);
+    const {data, error, isError, isLoading }=doFetch('/api/privileges/',token,['get','privileges']);
 
     useEffect(()=>{
         setPrivileges(data);

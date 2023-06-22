@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {InputText} from "primereact/inputtext";
-import {InputTextarea} from "primereact/inputtextarea";
-import {Calendar} from "primereact/calendar";
-import {SelectButton} from "primereact/selectbutton";
-import {InputField, RadioField, SelectField} from "formik-stepper";
+import React, {useEffect, useState} from 'react';
+import AppFormSelectField from "../../../components/form/AppFormSelectField.jsx";
+import AppFormTextField from "../../../components/form/AppFormTextField.jsx";
+import AppFormCalendar from "../../../components/form/AppFormCalendar.jsx";
+import AppForm from "../../../components/form/AppForm.jsx";
+import {Field} from "formik";
 
-const ProductStep2 =()=>{
+const ProductStep2 =({initValues, validationSchema, onNextStep, onBack, token})=>{
 
     const discountTypes=[
         {label: 'Percentage', value:'percent'},
@@ -13,16 +13,31 @@ const ProductStep2 =()=>{
         {label:'Coupon', value:'coupon'}
     ]
 
+
+        console.log(initValues)
+
+
     return (
         <>
             <div className={'grid'}>
-                <div className="col-12">
-                    <SelectField   label={'Discount Type'} name={'discountType'} options={discountTypes} />
-                    <InputField style={{width:'100%'}}  label={'Product Discount'} type={'text'} name={'discount'} className={'col-12'} />
-                    <InputField label={'Coupon'} name="coupon" style={{width:'100%'}} />
-                    <InputField type={'date'} dateFormat={'dd/mm/yy'} id="promotionStart" name="promotionStart" style={{width:'100%'}} placeholder={'Promotion Start Date'} />
-                    <InputField type={'date'} dateFormat={'dd/mm/yy'} id="promotionEnd" name="promotionEnd" style={{width:'100%'}} placeholder={'Promotion End Date'} />
-                </div>
+                <AppForm
+                    initialValues={initValues}
+                    validationSchema={validationSchema}
+                    onSubmit={onNextStep}
+                    onBack={onBack}
+                >
+
+                    <Field  name={'discountType'} as={AppFormSelectField} options={discountTypes} label={'Discount Type'} />
+
+                    <Field name={'discount'} as={AppFormTextField} label={'Discount Value'} />
+
+                    <Field name={'coupon'} as={AppFormTextField} label={'Coupon'} />
+
+                    <Field name={'promotionStartDate'} as={AppFormCalendar} label={'Promotion Start Date'} dateFormat={'dd/mm/yy'} />
+
+                    <Field name={'promotionEndDate'} as={AppFormCalendar} label={'Promotion End Date'} dateFormat={'dd/mm/yy'} />
+
+                </AppForm>
             </div>
         </>
     )

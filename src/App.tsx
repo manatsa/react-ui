@@ -2,7 +2,7 @@ import React,{Suspense} from 'react';
 import Login from "./screens/login";
 import Users from "./screens/admin/users";
 import Payments from "./screens/finance/payments";
-import {Routes, Route} from "react-router-dom";
+import {Routes, Route, Navigate} from "react-router-dom";
 import Home from "./screens/home";
 import NewBusiness from "./screens/underwriting/new.business";
 import Renewals from "./screens/underwriting/renewals";
@@ -20,7 +20,7 @@ function App() {
     <>
 
                 <Routes>
-                    <Route path="/home" element={<Home />} />
+                    <Route path="/home" element={<Navigate to={'/'} />} />
                     <Route path="/new/business" element={<NewBusiness />} />
                     <Route path="/renewals" element={<Renewals />} />
                     <Route path="/payments" element={<Payments />} />
@@ -32,7 +32,7 @@ function App() {
                     <Route path="/industry" element={<Industry />} />
                     <Route path="/category" element={<Category />} />
                     <Route path="/product" element={<Product />} />
-                    <Route path="/" element={<Login />} />
+                    <Route path="/" element={<Product />} />
                 </Routes>
 
 
